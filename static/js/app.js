@@ -163,6 +163,18 @@ function updateTotals() {
   $('.total').text(`$${total}`);
 }
 
+function countDuplicates(id) {
+  let cart = JSON.parse(sessionStorage.getItem('cart'));
+  let count = 0;
+  for (let i in cart) {
+    if (cart[i].id == id) {
+      count += 1
+    }
+  }
+  return count;
+}
+
+
 // create a showCart method to render all items within the cart variable
 function showCart() {
   // get the value and parse from session storage
@@ -177,17 +189,24 @@ function showCart() {
 
     let html = '';
 
+    let duplicates = [];
+
     for (let i in cart) {
-      html += `
-        <tr>
-          <td>1</td>
-          <td>${cart[i].name}</td>
-          <td>$${cart[i].price.toFixed(2)}</td>
-          <td>
+      let count = countDuplicates(cart[i].id);
+
+      if (duplicates.indexOf(cart[i].id)== -1) {
+        html += `
+          <tr>
+            <td>${count}</td>
+            <td>${cart[i].name}</td>
+            <td>$${(cart[i].price*count).toFixed(2)}</td>
+            <td>
             <button onClick="removeItem(${cart[i].id})" class="btn btn-danger">X</button>
-          </td>
-        </tr>
-      `;
+            </td>
+          </tr>
+        `;
+        duplicates.push(cart[i].id);
+      }
     }
 
 
